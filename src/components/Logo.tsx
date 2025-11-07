@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "@/assets/nectaris-logo.png";
+import logo from "@/assets/nectaris-logo-bee.png";
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";

@@ -16,6 +16,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const AVAILABLE_FLOWERS = [
+  "Salcâm", "Tei", "Rapiță", "Floarea-soarelui", "Trifoi",
+  "Lavandă", "Mentă", "Coriandru", "Măr", "Păr", "Cireș",
+  "Gutui", "Nuc", "Castan", "Alte flori"
+];
+
 const BeekeeperDashboard = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -47,7 +53,7 @@ const BeekeeperDashboard = () => {
       if (error) throw error;
       setLands(data || []);
     } catch (error: any) {
-      toast.error("Failed to load land listings");
+      toast.error("Eroare la încărcarea terenurilor");
     } finally {
       setLoading(false);
     }
@@ -65,7 +71,7 @@ const BeekeeperDashboard = () => {
       if (error) throw error;
       setFavorites(new Set(data?.map(f => f.land_id) || []));
     } catch (error: any) {
-      console.error("Failed to load favorites");
+      console.error("Eroare la încărcarea favoritelor");
     }
   };
 
@@ -85,17 +91,17 @@ const BeekeeperDashboard = () => {
           newSet.delete(landId);
           return newSet;
         });
-        toast.success("Removed from favorites");
+        toast.success("Eliminat din favorite");
       } else {
         await supabase
           .from('favorites')
           .insert({ beekeeper_id: user.id, land_id: landId });
         
         setFavorites(prev => new Set(prev).add(landId));
-        toast.success("Added to favorites");
+        toast.success("Adăugat la favorite");
       }
     } catch (error: any) {
-      toast.error("Failed to update favorites");
+      toast.error("Eroare la actualizarea favoritelor");
     }
   };
 
@@ -107,12 +113,8 @@ const BeekeeperDashboard = () => {
     return true;
   });
 
-  // Get unique flowers from all lands
-  const allFlowers = Array.from(new Set(lands.flatMap(land => land.flowers || [])));
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Logo />
@@ -130,40 +132,38 @@ const BeekeeperDashboard = () => {
               <User className="h-5 w-5" />
             </Button>
             <Button variant="outline" onClick={signOut}>
-              Sign Out
+              Deconectare
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">
-            {showFavorites ? 'Your Favorites' : 'Find Perfect Land for Your Bees'}
+            {showFavorites ? 'Favoritele Tale' : 'Găsește Teren Perfect pentru Stupii Tăi'}
           </h1>
           <p className="text-muted-foreground">
             {showFavorites 
-              ? 'Browse your saved locations'
-              : 'Search and filter verified locations for your hives'
+              ? 'Navighează prin locațiile salvate'
+              : 'Caută și filtrează locații verificate pentru stupină'
             }
           </p>
         </div>
 
-        {/* Search and Filters */}
         <div className="mb-8 space-y-4">
           <div className="flex gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
-                placeholder="Search by title..."
+                placeholder="Caută după titlu..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
               />
             </div>
             <Input
-              placeholder="Filter by location..."
+              placeholder="Filtrează după locație..."
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
               className="w-64"
@@ -173,11 +173,11 @@ const BeekeeperDashboard = () => {
           <div className="flex gap-4">
             <Select value={flowerFilter} onValueChange={setFlowerFilter}>
               <SelectTrigger className="w-64">
-                <SelectValue placeholder="Filter by flowers" />
+                <SelectValue placeholder="Filtrează după flori" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Flowers</SelectItem>
-                {allFlowers.map(flower => (
+                <SelectItem value="all">Toate Florile</SelectItem>
+                {AVAILABLE_FLOWERS.map(flower => (
                   <SelectItem key={flower} value={flower}>{flower}</SelectItem>
                 ))}
               </SelectContent>
@@ -185,7 +185,6 @@ const BeekeeperDashboard = () => {
           </div>
         </div>
 
-        {/* Land Grid */}
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -193,7 +192,7 @@ const BeekeeperDashboard = () => {
         ) : filteredLands.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-xl text-muted-foreground">
-              {showFavorites ? 'No favorites yet' : 'No land listings found'}
+              {showFavorites ? 'Nu ai favorite încă' : 'Nu s-au găsit terenuri'}
             </p>
           </div>
         ) : (

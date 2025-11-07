@@ -75,26 +75,26 @@ export const LandCard = ({
             ))}
             {flowers.length > 3 && (
               <Badge variant="secondary" className="text-xs">
-                +{flowers.length - 3} more
+                +{flowers.length - 3}
               </Badge>
             )}
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t">
             <div>
-              <div className="text-sm text-muted-foreground">Space</div>
+              <div className="text-sm text-muted-foreground">Suprafață</div>
               <div className="font-semibold">{space_hectares} ha</div>
             </div>
             <div className="text-right">
-              <div className="text-sm text-muted-foreground">Price</div>
-              <div className="font-semibold text-primary">${price_per_month}/mo</div>
+              <div className="text-sm text-muted-foreground">Preț</div>
+              <div className="font-semibold text-primary">{price_per_month} lei/lună</div>
             </div>
           </div>
 
           {available_from && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground pt-2">
               <Calendar className="h-4 w-4" />
-              Available from {new Date(available_from).toLocaleDateString()}
+              Disponibil de la {new Date(available_from).toLocaleDateString('ro-RO')}
             </div>
           )}
         </div>

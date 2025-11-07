@@ -48,38 +48,44 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-honey-light/20 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center">
+    <div className="min-h-screen bg-gradient-to-br from-background to-honey-light/20 flex items-center justify-center p-6">
+      <div className="w-full max-w-lg space-y-8">
+        <div className="text-center space-y-4">
           <Logo size="lg" />
-          <p className="mt-4 text-muted-foreground">
-            {role === 'beekeeper' ? 'Beekeeper' : 'Landowner'} Account
-          </p>
+          <div>
+            <h1 className="text-3xl font-bold mb-2">
+              {role === 'beekeeper' ? 'Cont Apicultor' : 'Cont Proprietar Teren'}
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              {role === 'beekeeper' ? 'Găsește terenuri pentru stupii tăi' : 'Oferă teren pentru apicultori'}
+            </p>
+          </div>
         </div>
 
-        <Card className="p-6">
+        <Card className="p-8">
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 h-14">
+              <TabsTrigger value="login" className="text-lg">Autentificare</TabsTrigger>
+              <TabsTrigger value="signup" className="text-lg">Înregistrare</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
-              <form onSubmit={handleSignIn} className="space-y-4 mt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
+              <form onSubmit={handleSignIn} className="space-y-6 mt-6">
+                <div className="space-y-3">
+                  <Label htmlFor="login-email" className="text-lg">Email</Label>
                   <Input
                     id="login-email"
                     type="email"
-                    placeholder="your@email.com"
+                    placeholder="email@exemplu.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="h-14 text-lg"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="login-password" className="text-lg">Parolă</Label>
                   <Input
                     id="login-password"
                     type="password"
@@ -87,32 +93,34 @@ const Auth = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    className="h-14 text-lg"
                   />
                 </div>
 
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Login
+                <Button type="submit" className="w-full h-14 text-lg" disabled={loading}>
+                  {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+                  Intră în cont
                 </Button>
               </form>
             </TabsContent>
 
             <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4 mt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+              <form onSubmit={handleSignUp} className="space-y-6 mt-6">
+                <div className="space-y-3">
+                  <Label htmlFor="signup-email" className="text-lg">Email</Label>
                   <Input
                     id="signup-email"
                     type="email"
-                    placeholder="your@email.com"
+                    placeholder="email@exemplu.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="h-14 text-lg"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="signup-password" className="text-lg">Parolă</Label>
                   <Input
                     id="signup-password"
                     type="password"
@@ -121,33 +129,35 @@ const Auth = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
+                    className="h-14 text-lg"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label>I am a</Label>
+                <div className="space-y-3">
+                  <Label className="text-lg">Sunt</Label>
                   <div className="grid grid-cols-2 gap-4">
                     <Button
                       type="button"
                       variant={role === 'beekeeper' ? 'default' : 'outline'}
                       onClick={() => setRole('beekeeper')}
+                      className="h-14 text-lg"
                     >
-                      Beekeeper
+                      Apicultor
                     </Button>
                     <Button
                       type="button"
                       variant={role === 'landowner' ? 'secondary' : 'outline'}
                       onClick={() => setRole('landowner')}
-                      className={role === 'landowner' ? 'bg-accent text-accent-foreground hover:bg-accent/90' : ''}
+                      className={`h-14 text-lg ${role === 'landowner' ? 'bg-accent text-accent-foreground hover:bg-accent/90' : ''}`}
                     >
-                      Landowner
+                      Proprietar
                     </Button>
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Create Account
+                <Button type="submit" className="w-full h-14 text-lg" disabled={loading}>
+                  {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+                  Creează cont
                 </Button>
               </form>
             </TabsContent>
@@ -155,8 +165,8 @@ const Auth = () => {
         </Card>
 
         <div className="text-center">
-          <Button variant="ghost" onClick={() => navigate('/')}>
-            Back to Home
+          <Button variant="ghost" onClick={() => navigate('/')} className="text-lg h-12">
+            Înapoi la pagina principală
           </Button>
         </div>
       </div>

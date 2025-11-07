@@ -48,10 +48,14 @@ const Account = () => {
         .eq('id', user.id);
 
       if (error) throw error;
-      toast.success("Profile updated!");
+      toast.success("Profil actualizat!");
     } catch (error) {
-      toast.error("Failed to update profile");
+      toast.error("Eroare la actualizarea profilului");
     }
+  };
+
+  const getRoleText = (role: string) => {
+    return role === 'beekeeper' ? 'Apicultor' : 'Proprietar';
   };
 
   return (
@@ -65,11 +69,11 @@ const Account = () => {
       <main className="container mx-auto px-4 py-8 max-w-2xl">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+          Înapoi
         </Button>
 
         <Card className="p-6">
-          <h1 className="text-2xl font-bold mb-6">Account Settings</h1>
+          <h1 className="text-2xl font-bold mb-6">Setări Cont</h1>
           
           <form onSubmit={handleUpdate} className="space-y-4">
             <div className="space-y-2">
@@ -78,21 +82,21 @@ const Account = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Role</Label>
-              <Input value={profile?.role || ""} disabled className="capitalize" />
+              <Label>Rol</Label>
+              <Input value={profile ? getRoleText(profile.role) : ""} disabled />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="full_name">Full Name</Label>
+              <Label htmlFor="full_name">Nume Complet</Label>
               <Input
                 id="full_name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Your name"
+                placeholder="Numele tău"
               />
             </div>
 
-            <Button type="submit">Update Profile</Button>
+            <Button type="submit">Actualizează Profilul</Button>
           </form>
         </Card>
       </main>

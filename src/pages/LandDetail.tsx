@@ -44,8 +44,8 @@ const LandDetail = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Land not found</h1>
-          <Button onClick={() => navigate(-1)}>Go Back</Button>
+          <h1 className="text-2xl font-bold mb-4">Teren negăsit</h1>
+          <Button onClick={() => navigate(-1)} size="lg" className="h-14 text-lg">Înapoi</Button>
         </div>
       </div>
     );
@@ -60,9 +60,14 @@ const LandDetail = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+        <Button 
+          variant="default" 
+          size="lg"
+          onClick={() => navigate(-1)} 
+          className="mb-6 h-14 text-lg px-8"
+        >
+          <ArrowLeft className="h-6 w-6 mr-3" />
+          Înapoi
         </Button>
 
         <Card className="p-8">
@@ -77,13 +82,13 @@ const LandDetail = () => {
 
             {land.description && (
               <div>
-                <h2 className="text-xl font-semibold mb-2">Description</h2>
-                <p className="text-muted-foreground">{land.description}</p>
+                <h2 className="text-xl font-semibold mb-2">Descriere</h2>
+                <p className="text-muted-foreground whitespace-pre-wrap">{land.description}</p>
               </div>
             )}
 
             <div>
-              <h2 className="text-xl font-semibold mb-3">Available Flowers</h2>
+              <h2 className="text-xl font-semibold mb-3">Flori Disponibile</h2>
               <div className="flex flex-wrap gap-2">
                 {land.flowers?.map((flower: string) => (
                   <Badge key={flower}>{flower}</Badge>
@@ -93,22 +98,30 @@ const LandDetail = () => {
 
             <div className="grid md:grid-cols-3 gap-6 pt-6 border-t">
               <div>
-                <div className="text-sm text-muted-foreground mb-1">Space</div>
+                <div className="text-sm text-muted-foreground mb-1">Suprafață</div>
                 <div className="text-2xl font-bold">{land.space_hectares} ha</div>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground mb-1">Price</div>
-                <div className="text-2xl font-bold text-primary">${land.price_per_month}/mo</div>
+                <div className="text-sm text-muted-foreground mb-1">Preț</div>
+                <div className="text-2xl font-bold text-primary">{land.price_per_month} lei/lună</div>
               </div>
-              {land.available_from && (
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">Available From</div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5" />
-                    {new Date(land.available_from).toLocaleDateString()}
-                  </div>
+              <div>
+                <div className="text-sm text-muted-foreground mb-1">Disponibil</div>
+                <div className="flex flex-col gap-1 text-sm">
+                  {land.available_from && (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      De la: {new Date(land.available_from).toLocaleDateString('ro-RO')}
+                    </div>
+                  )}
+                  {land.available_until && (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      Până la: {new Date(land.available_until).toLocaleDateString('ro-RO')}
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </Card>
