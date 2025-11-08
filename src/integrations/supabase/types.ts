@@ -109,10 +109,10 @@ export type Database = {
           description: string | null
           flowers: string[] | null
           id: string
-          image_url: string | null
+          image_urls: string[] | null
           location: string
           owner_id: string
-          price_per_month: number
+          price_per_day: number
           space_hectares: number
           title: string
           updated_at: string
@@ -125,10 +125,10 @@ export type Database = {
           description?: string | null
           flowers?: string[] | null
           id?: string
-          image_url?: string | null
+          image_urls?: string[] | null
           location: string
           owner_id: string
-          price_per_month: number
+          price_per_day: number
           space_hectares: number
           title: string
           updated_at?: string
@@ -141,10 +141,10 @@ export type Database = {
           description?: string | null
           flowers?: string[] | null
           id?: string
-          image_url?: string | null
+          image_urls?: string[] | null
           location?: string
           owner_id?: string
-          price_per_month?: number
+          price_per_day?: number
           space_hectares?: number
           title?: string
           updated_at?: string

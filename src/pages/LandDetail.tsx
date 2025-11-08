@@ -6,6 +6,13 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, MapPin, Calendar, Loader2 } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const LandDetail = () => {
   const { id } = useParams();
@@ -72,6 +79,30 @@ const LandDetail = () => {
 
         <Card className="p-8">
           <div className="space-y-6">
+            {land.image_urls && land.image_urls.length > 0 && (
+              <Carousel className="w-full max-w-3xl mx-auto">
+                <CarouselContent>
+                  {land.image_urls.map((url: string, index: number) => (
+                    <CarouselItem key={index}>
+                      <div className="relative h-96 bg-muted rounded-lg overflow-hidden">
+                        <img 
+                          src={url} 
+                          alt={`${land.title} - Foto ${index + 1}`} 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                {land.image_urls.length > 1 && (
+                  <>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </>
+                )}
+              </Carousel>
+            )}
+
             <div>
               <h1 className="text-4xl font-bold mb-2">{land.title}</h1>
               <div className="flex items-center gap-2 text-muted-foreground">
@@ -103,7 +134,7 @@ const LandDetail = () => {
               </div>
               <div>
                 <div className="text-sm text-muted-foreground mb-1">Preț</div>
-                <div className="text-2xl font-bold text-primary">{land.price_per_month} lei/lună</div>
+                <div className="text-2xl font-bold text-primary">{land.price_per_day} lei/zi</div>
               </div>
               <div>
                 <div className="text-sm text-muted-foreground mb-1">Disponibil</div>

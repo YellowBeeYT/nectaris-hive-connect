@@ -33,8 +33,8 @@ const LandownerDashboard = () => {
   const [selectedFlowers, setSelectedFlowers] = useState<string[]>([]);
   const [availableFrom, setAvailableFrom] = useState<Date>();
   const [availableUntil, setAvailableUntil] = useState<Date>();
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -42,7 +42,7 @@ const LandownerDashboard = () => {
     location: "",
     description: "",
     space_hectares: "",
-    price_per_month: "",
+    price_per_day: "",
   });
 
   useEffect(() => {
@@ -73,40 +73,54 @@ const LandownerDashboard = () => {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const newFiles = Array.from(files);
+    setImageFiles(prev => [...prev, ...newFiles]);
+
+    newFiles.forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        setImagePreviews(prev => [...prev, reader.result as string]);
       };
       reader.readAsDataURL(file);
-    }
+    });
   };
 
-  const uploadImage = async (file: File): Promise<string | null> => {
-    if (!user) return null;
+  const removeImage = (index: number) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadImages = async (files: File[]): Promise<string[]> => {
+    if (!user) return [];
     
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-      
-      const { error: uploadError } = await supabase.storage
-        .from('land-images')
-        .upload(fileName, file);
+    const urls: string[] = [];
+    
+    for (const file of files) {
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${user.id}/${Date.now()}-${Math.random()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('land-images')
+          .upload(fileName, file);
 
-      if (uploadError) throw uploadError;
+        if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage
-        .from('land-images')
-        .getPublicUrl(fileName);
+        const { data } = supabase.storage
+          .from('land-images')
+          .getPublicUrl(fileName);
 
-      return data.publicUrl;
-    } catch (error) {
-      console.error('Eroare la încărcarea imaginii:', error);
-      toast.error("Eroare la încărcarea imaginii");
-      return null;
+        urls.push(data.publicUrl);
+      } catch (error) {
+        console.error('Eroare la încărcarea imaginii:', error);
+        toast.error("Eroare la încărcarea unei imagini");
+      }
     }
+    
+    return urls;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -116,10 +130,7 @@ const LandownerDashboard = () => {
     setUploading(true);
 
     try {
-      let imageUrl = null;
-      if (imageFile) {
-        imageUrl = await uploadImage(imageFile);
-      }
+      const imageUrls = imageFiles.length > 0 ? await uploadImages(imageFiles) : [];
 
       const { error } = await supabase
         .from('land_listings')
@@ -129,23 +140,23 @@ const LandownerDashboard = () => {
           location: formData.location,
           description: formData.description || null,
           space_hectares: parseFloat(formData.space_hectares),
-          price_per_month: parseFloat(formData.price_per_month),
+          price_per_day: parseFloat(formData.price_per_day),
           flowers: selectedFlowers,
           available_from: availableFrom?.toISOString().split('T')[0] || null,
           available_until: availableUntil?.toISOString().split('T')[0] || null,
-          image_url: imageUrl,
+          image_urls: imageUrls,
         });
 
       if (error) throw error;
 
       toast.success("Teren adăugat cu succes!");
       setDialogOpen(false);
-      setFormData({ title: "", location: "", description: "", space_hectares: "", price_per_month: "" });
+      setFormData({ title: "", location: "", description: "", space_hectares: "", price_per_day: "" });
       setSelectedFlowers([]);
       setAvailableFrom(undefined);
       setAvailableUntil(undefined);
-      setImageFile(null);
-      setImagePreview("");
+      setImageFiles([]);
+      setImagePreviews([]);
       fetchLands();
     } catch (error: any) {
       toast.error("Eroare la adăugarea terenului");
@@ -286,6 +297,7 @@ const LandownerDashboard = () => {
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Adaugă detalii despre teren..."
                     rows={4}
+                    className="whitespace-pre-wrap"
                   />
                 </div>
 
@@ -313,42 +325,43 @@ const LandownerDashboard = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Imagine Teren</Label>
+                  <Label>Imagini Teren (multiple)</Label>
                   <div className="flex flex-col gap-4">
-                    {imagePreview ? (
-                      <div className="relative">
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="w-full h-48 object-cover rounded-lg"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-2 right-2"
-                          onClick={() => {
-                            setImageFile(null);
-                            setImagePreview("");
-                          }}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                    {imagePreviews.length > 0 && (
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {imagePreviews.map((preview, index) => (
+                          <div key={index} className="relative">
+                            <img
+                              src={preview}
+                              alt={`Preview ${index + 1}`}
+                              className="w-full h-32 object-cover rounded-lg"
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              className="absolute top-2 right-2"
+                              onClick={() => removeImage(index)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
                       </div>
-                    ) : (
-                      <label className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors">
-                        <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">
-                          Click pentru a încărca o imagine
-                        </span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageChange}
-                          className="hidden"
-                        />
-                      </label>
                     )}
+                    <label className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors">
+                      <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">
+                        Click pentru a încărca imagini (multiple)
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </label>
                   </div>
                 </div>
 
@@ -367,14 +380,14 @@ const LandownerDashboard = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="price">Preț (lei/lună) *</Label>
+                    <Label htmlFor="price">Preț (lei/zi) *</Label>
                     <Input
                       id="price"
                       type="number"
                       step="1"
                       min="0"
-                      value={formData.price_per_month}
-                      onChange={(e) => setFormData({ ...formData, price_per_month: e.target.value })}
+                      value={formData.price_per_day}
+                      onChange={(e) => setFormData({ ...formData, price_per_day: e.target.value })}
                       required
                     />
                   </div>
@@ -401,6 +414,7 @@ const LandownerDashboard = () => {
                           mode="single"
                           selected={availableFrom}
                           onSelect={setAvailableFrom}
+                          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                           initialFocus
                           className="pointer-events-auto"
                         />
@@ -429,7 +443,10 @@ const LandownerDashboard = () => {
                           selected={availableUntil}
                           onSelect={setAvailableUntil}
                           initialFocus
-                          disabled={(date) => availableFrom ? date < availableFrom : false}
+                          disabled={(date) => {
+                            const minDate = availableFrom || new Date(new Date().setHours(0, 0, 0, 0));
+                            return date < minDate;
+                          }}
                           className="pointer-events-auto"
                         />
                       </PopoverContent>
@@ -463,9 +480,9 @@ const LandownerDashboard = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {lands.map((land) => (
               <Card key={land.id} className="overflow-hidden hover-lift">
-                {land.image_url && (
+                {land.image_urls && land.image_urls.length > 0 && (
                   <img
-                    src={land.image_url}
+                    src={land.image_urls[0]}
                     alt={land.title}
                     className="w-full h-48 object-cover"
                   />
@@ -503,7 +520,7 @@ const LandownerDashboard = () => {
                     </div>
                     <div>
                       <div className="text-sm text-muted-foreground">Preț</div>
-                      <div className="font-semibold text-primary">{land.price_per_month} lei/lună</div>
+                      <div className="font-semibold text-primary">{land.price_per_day} lei/zi</div>
                     </div>
                   </div>
 

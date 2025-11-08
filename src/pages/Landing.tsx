@@ -20,7 +20,7 @@ const Landing = () => {
             <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
               Conectăm{" "}
               <span className="text-gradient-honey">Apicultorii</span> cu
-              Terenuri Perfecte
+              Terenuri Ideale
             </h1>
             <p className="text-xl text-muted-foreground">
               Găsește locații ideale pentru stupii tăi sau oferă terenul tău pentru apicultori.
@@ -40,7 +40,7 @@ const Landing = () => {
       </section>
 
       <section className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-12">Alege-ți Calea</h2>
+        <h2 className="text-3xl font-bold text-center mb-12">Alege-ți rolul</h2>
         
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <Card className="p-8 hover-lift cursor-pointer transition-smooth group bg-card border-2 hover:border-primary hexagon-pattern"

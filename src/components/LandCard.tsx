@@ -10,8 +10,8 @@ interface LandCardProps {
   location: string;
   flowers: string[];
   space_hectares: number;
-  price_per_month: number;
-  image_url?: string;
+  price_per_day: number;
+  image_urls?: string[];
   available_from?: string;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
@@ -23,8 +23,8 @@ export const LandCard = ({
   location,
   flowers,
   space_hectares,
-  price_per_month,
-  image_url,
+  price_per_day,
+  image_urls,
   available_from,
   isFavorite,
   onToggleFavorite,
@@ -35,8 +35,8 @@ export const LandCard = ({
     <Card className="overflow-hidden hover-lift cursor-pointer group">
       <div onClick={() => navigate(`/land/${id}`)}>
         <div className="relative h-48 bg-muted overflow-hidden">
-          {image_url ? (
-            <img src={image_url} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-smooth" />
+          {image_urls && image_urls.length > 0 ? (
+            <img src={image_urls[0]} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-smooth" />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-honey-light to-honey flex items-center justify-center">
               <span className="text-4xl">🌸</span>
@@ -87,7 +87,7 @@ export const LandCard = ({
             </div>
             <div className="text-right">
               <div className="text-sm text-muted-foreground">Preț</div>
-              <div className="font-semibold text-primary">{price_per_month} lei/lună</div>
+              <div className="font-semibold text-primary">{price_per_day} lei/zi</div>
             </div>
           </div>
 
