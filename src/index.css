@@ -111,14 +111,39 @@ All colors MUST be HSL.
     z-index: -1;
   }
   
-  /* Honeycomb pattern background */
+  /* Subtle hexagonal pattern background */
+  .hexagon-pattern {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .hexagon-pattern::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(30deg, transparent 45%, hsl(var(--honey-light) / 0.03) 45%, hsl(var(--honey-light) / 0.03) 55%, transparent 55%),
+      linear-gradient(90deg, transparent 45%, hsl(var(--honey-light) / 0.03) 45%, hsl(var(--honey-light) / 0.03) 55%, transparent 55%),
+      linear-gradient(150deg, transparent 45%, hsl(var(--honey-light) / 0.03) 45%, hsl(var(--honey-light) / 0.03) 55%, transparent 55%);
+    background-size: 60px 104px;
+    background-position: 0 0, 30px 52px, 30px 52px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .hexagon-pattern > * {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Honeycomb pattern background - more visible */
   .honeycomb-bg {
     background-image: 
-      radial-gradient(circle at 50% 50%, hsl(var(--honey-light)) 1px, transparent 1px),
-      radial-gradient(circle at 0% 100%, hsl(var(--honey-light)) 1px, transparent 1px),
-      radial-gradient(circle at 100% 100%, hsl(var(--honey-light)) 1px, transparent 1px);
-    background-size: 40px 70px;
-    background-position: 0 0, 20px 35px, -20px 35px;
+      radial-gradient(circle at 50% 50%, hsl(var(--honey-light) / 0.15) 1px, transparent 1px),
+      radial-gradient(circle at 0% 100%, hsl(var(--honey-light) / 0.15) 1px, transparent 1px),
+      radial-gradient(circle at 100% 100%, hsl(var(--honey-light) / 0.15) 1px, transparent 1px);
+    background-size: 50px 87px;
+    background-position: 0 0, 25px 43.5px, -25px 43.5px;
   }
 }
 
